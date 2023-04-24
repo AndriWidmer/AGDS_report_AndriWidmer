@@ -1,0 +1,65 @@
+```{r}
+library(tidyverse)
+```
+
+```{r}
+airquality=datasets::airquality
+#shows solar radiation, wind, temperature and ozone concentration on each day of mai, june, july, august and september.
+```
+
+```{r}
+airqualityC=airquality
+airqualityC[,4]=((airqualityC[,4]-32)*(5/9))
+plot(airqualityC[,4],type="l",xlab="month",ylab="temp in C°")
+#assumption that temperature was originally given in fahrenheit
+```
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot(
+    airqualityC,
+    aes(x = seq(1:153), y = Solar.R)) +
+  geom_line() +
+  labs(x = "Time", y = "Solar.R") +
+  theme_classic()
+```
+Hypothesis: There is a peak around the summer months June and July. (under the assumptions, that the measures where made in the northern hemisphere)
+These are the fluctuations of the solar Radiation between May and September. I could have ex-pected that there are visible patterns of fluctuations of the solar radiation over the seasons. I thought there will be a peak around June or July and sinks in May and September. In this figure, at least for me, this trend is not visible. My guess is that the measured Solar Radiation depends a lot on the weather. If there are clouds, the measure will become small.
+
+```{r}
+airqualityC[,5] <- month.name[airqualityC[,5]]
+```
+
+```{r}
+ggplot(airqualityC, aes(x= Solar.R, y=..density..)) +
+  geom_histogram(fill="grey70", color = "black") + geom_density(color = "red")+labs(x="Sonnenstrahlung",y="Häufigkeitsdichte")
+```
+Hypothesis: when solar radiation is high, there are few clouds.
+This figure gives a reference how the Solar Radiation is distributed. It shows the frequency density of the solar Radiaton. Very high numbers (above 300) are rare. There is a slight peak around 250. For lower values (approximately 0 to 220) there is no clear trend recognizable. The peak is in the right part of the figure. I think this suggests that generally the weather was quite good. Or according to my hypothesis, there was generally few cloud cover.
+
+
+```{r}
+#regression line for Temp and Solar.R
+
+#first create a table with only 2 variables
+airqualityCT_R=airqualityC[,2:4]
+airqualityCT_R$Wind=NULL
+
+#with the lm() function the intersect and slope can be found
+lm(airqualityCT_R)
+cor.test(airqualityCT_R[,1],airqualityCT_R[,2])
+```
+```{r}
+plot(airqualityC[,4],airqualityC[,2],type="p",ylab="Sonnenstrahlung",xlab="Temperatur")
+abline(a=61.743,b=4.847)
+```
+Hypothesis: the higher the solar Radiation, the warmer it gets.
+This is a simple scatterplot where the two variables solar radiation and temperature are plotted against each other. In addition, the Regression line is shown too.
+
+The p-Value is lower than 0.05 and even smaller than 0.01. generally that means, that the numbers used to calculate the p-value suggest a statistical significant correlation between the two variables. Therefore the hypothesis is not falsified with this data.
+```{r}
+ggplot(boxplot(airqualityC[,3]))
+```
+The p-Value is lower than 0.05 and even smaller than 0.01. generally that means, that the numbers used to calculate the p-value suggest a statistical significant correlation between the two variables. Therefore the hypothesis is not falsified with this data.
